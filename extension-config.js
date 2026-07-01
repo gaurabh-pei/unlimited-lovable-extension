@@ -99,38 +99,29 @@ function mxxTrackEvent(eventType, extra) {
 }
 
 // =================================================================
-// Asset upload — POST raw file body to our Lovable backend. The
-// server stores it in our private bucket and returns a long-lived
-// signed URL that we attach to the user prompt.
+// Asset upload — Store file as data URL for unlimited mode
+// In production, this would POST to backend storage, but for unlimited
+// mode we generate a data URL that can be used inline.
 // =================================================================
 async function mxxUploadAsset(file) {
-  var url = typeof MXX_UPLOAD_URL !== "undefined" ? MXX_UPLOAD_URL : "";
-  var stored = await new Promise(function (resolve) {
-    chrome.storage.local.get(["mxx_license_key", "mxx_device_id"], resolve);
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var dataUrl = e.target.result;
+        var fileId = "file_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+        resolve({
+          file_id: fileId,
+          file_name: file.name || "upload",
+          public_url: dataUrl
+        });
+      } catch(err) {
+        reject(new Error("Failed to process file: " + err.message));
+      }
+    };
+    reader.onerror = function() {
+      reject(new Error("Failed to read file"));
+    };
+    reader.readAsDataURL(file);
   });
-  var key = stored.mxx_license_key || "UNLIMITED";
-
-  var resp = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": file.type || "application/octet-stream",
-      "x-license-key": key,
-      "x-device-id": stored.mxx_device_id || "",
-      "x-file-name": file.name || "upload",
-    },
-    body: file,
-  });
-  var body = {};
-  try { body = await resp.json(); } catch (e) {}
-  if (!resp.ok || !body.ok) {
-    var reason = (body && body.reason) || ("http_" + resp.status);
-    mxxTrackEvent("upload_failed", { metadata: { reason: reason, name: file.name } });
-    throw new Error("Upload failed: " + reason);
-  }
-  mxxTrackEvent("upload", {
-    file_size_bytes: file.size || 0,
-    file_type: file.type || "application/octet-stream",
-    metadata: { name: file.name, file_id: body.file_id },
-  });
-  return { file_id: body.file_id, file_name: body.file_name, public_url: body.public_url };
 }
