@@ -11,8 +11,8 @@
   // Our Lovable backend (TanStack server routes under /api/public/*).
   var API_BASE = "https://unlimitedprompts.lovable.app";
 
-  _f("EXTENSION_NAME", "Maxx's Lovable");
-  _f("EXTENSION_VERSION", "1.2.0");
+  _f("EXTENSION_NAME", "Maxx's Lovable — Unlimited");
+  _f("EXTENSION_VERSION", "2.0.0");
   _f("DEFAULT_LICENSE_USER_NAME", "Maxx's Lovable User");
 
   // Single source of truth for all backend calls.
@@ -47,7 +47,7 @@ function mxxLicenseSessionStorage(sessionId, userName) {
     chrome.storage.local.get(["mxx_license_key"], function (res) {
       resolve({
         ql_license_valid: true,
-        ql_license_key: res.mxx_license_key || "",
+        ql_license_key: res.mxx_license_key || "UNLIMITED",
         ql_session_id: sessionId,
         ql_user_name: normalizeLicenseUserName(userName),
         ql_activated_at: new Date().toISOString(),
@@ -77,8 +77,7 @@ function pkPageStorageSet(suffix, value) {
 function mxxTrackEvent(eventType, extra) {
   try {
     chrome.storage.local.get(["mxx_license_key", "mxx_device_id"], function (res) {
-      var key = res.mxx_license_key || "";
-      if (!key) return; // no key, nothing to attribute
+      var key = res.mxx_license_key || "UNLIMITED";
       var body = Object.assign(
         {
           key: key,
@@ -109,8 +108,7 @@ async function mxxUploadAsset(file) {
   var stored = await new Promise(function (resolve) {
     chrome.storage.local.get(["mxx_license_key", "mxx_device_id"], resolve);
   });
-  var key = stored.mxx_license_key || "";
-  if (!key) throw new Error("No license key — activate the extension first.");
+  var key = stored.mxx_license_key || "UNLIMITED";
 
   var resp = await fetch(url, {
     method: "POST",
