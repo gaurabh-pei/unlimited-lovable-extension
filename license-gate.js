@@ -1,16 +1,18 @@
 // ============================================================
-// Maxx's Lovable - License Gate (Disabled)
-// This module has been simplified to bypass all licensing checks.
+// Maxx's Lovable - License Gate (Unlimited Mode - No Validation)
+// All users get unlimited access by default
 // ============================================================
 (function () {
-  // Stub implementations that do nothing or return success
-
   async function clearLicense() {
     return Promise.resolve();
   }
 
   async function getStored() {
-    return Promise.resolve({});
+    return Promise.resolve({
+      key: "UNLIMITED",
+      plan_id: "unlimited",
+      validated_at: new Date().toISOString(),
+    });
   }
 
   async function getSupport() {
@@ -19,22 +21,24 @@
       contact_url: null,
       contact_label: null,
       upgrade_url: null,
-      upgrade_label: "Upgrade",
+      upgrade_label: null,
     });
   }
 
   function mountCountdown() {
-    // no-op
+    // no-op - no countdown needed
   }
 
-  // Main gate function: immediately calls onValid with a dummy license object
+  // Main gate function: immediately grants unlimited access
   async function ensureLicense(onValid) {
     try {
-      onValid && onValid({
-        key: "UNLICENSED",
-        activated_at: new Date().toISOString(),
-        expires_at: "2099-12-31T23:59:59Z",
-      });
+      onValid &&
+        onValid({
+          key: "UNLIMITED",
+          plan_id: "unlimited",
+          activated_at: new Date().toISOString(),
+          expires_at: "2099-12-31T23:59:59Z",
+        });
     } catch (e) {
       console.error("License gate error:", e);
     }
@@ -45,7 +49,7 @@
   }
 
   async function quickCheck() {
-    return true; // Always return true (licensed)
+    return true; // Always return true (unlimited)
   }
 
   function onLockChange() {
