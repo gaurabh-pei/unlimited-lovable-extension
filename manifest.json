@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Maxx's Lovable",
-  "version": "1.2.0",
-  "description": "Companion extension for Lovable.dev with license, analytics, and prompt asset uploads.",
+  "name": "Maxx's Lovable — Unlimited",
+  "version": "2.0.0",
+  "description": "Companion extension for Lovable.dev with unlimited plans, analytics, and prompt asset uploads.",
   "permissions": [
     "storage",
     "activeTab",
@@ -20,7 +20,7 @@
     "https://unlimitedprompts.lovable.app/*"
   ],
   "action": {
-    "default_title": "Maxx's Lovable",
+    "default_title": "Maxx's Lovable — Unlimited",
     "default_icon": {
       "16": "assets/icon16.png",
       "32": "assets/icon32.png",
@@ -54,6 +54,7 @@
       ],
       "js": [
         "extension-config.js",
+        "plan-config.js",
         "lovable-auth.js",
         "lovable-feature-api.js",
         "user-messages.js",
