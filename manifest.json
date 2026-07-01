@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Maxx's Lovable — Unlimited",
   "version": "2.0.0",
-  "description": "Companion extension for Lovable.dev with unlimited plans, analytics, and prompt asset uploads.",
+  "description": "Unlimited Chrome extension for Lovable.dev with asset uploads, prompt optimization, and analytics.",
   "permissions": [
     "storage",
     "activeTab",
